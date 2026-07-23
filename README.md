@@ -23,7 +23,7 @@
 
 *地图完整覆盖场景轮廓，9个障碍物位置清晰可辨，边界干净无明显噪声*
 
-**Nav2自主导航演示视频**：`nav2_navigation_demo.mp4`（另附）
+**Nav2自主导航演示视频**：[nav2_navigation_demo.webm](videos/nav2_navigation_demo.webm)
 
 ---
 
@@ -55,7 +55,7 @@
 
 *机器人（画面中心）需要穿越场地并绕开多个障碍物，才能到达左下方的红色目标*
 
-**感知+导航联动演示视频**：`perception_navigation_demo.mp4`（另附）
+**感知+导航联动演示视频**：[perception_navigation_demo.webm](videos/perception_navigation_demo.webm)
 
 ---
 
