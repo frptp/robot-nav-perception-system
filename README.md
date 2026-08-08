@@ -10,6 +10,50 @@
 
 ---
 
+## 快速开始
+
+### 环境准备
+
+本包需要与 TurtleBot3 官方系列包（`turtlebot3`、`turtlebot3_msgs`、`turtlebot3_simulations`）放在同一个 ROS2 工作区中编译，并安装以下依赖：
+
+```bash
+sudo apt install ros-humble-gazebo-ros ros-humble-nav2-bringup \
+  ros-humble-slam-toolbox ros-humble-teleop-twist-keyboard
+
+cd ~/turtlebot3_ws
+colcon build --symlink-install
+source install/setup.bash
+```
+
+### 设置仿真环境变量
+
+```bash
+export TURTLEBOT3_MODEL=waffle
+export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:$(ros2 pkg prefix turtlebot3_gazebo)/share/turtlebot3_gazebo/models
+```
+
+### 一键启动（每条命令都会自动拉起完整仿真）
+
+| 功能 | 命令 |
+|---|---|
+| 仿真环境（Gazebo 彩色场景 + 机器人） | `ros2 launch robot_perception simulation.launch.py` |
+| SLAM 建图 | `ros2 launch robot_perception mapping.launch.py` |
+| Nav2 自主导航 | `ros2 launch robot_perception navigation.launch.py` |
+| 感知-导航闭环 | `ros2 launch robot_perception perception.launch.py` |
+
+常用操作：
+
+- 建图时在另一个终端手动控制机器人：`ros2 run teleop_twist_keyboard teleop_twist_keyboard`
+- 保存地图：`ros2 run nav2_map_server map_saver_cli -f ~/my_map`
+- 加载自定义世界：`ros2 launch robot_perception simulation.launch.py world:=/path/to/your.world`
+- 感知闭环默认寻找**红色**目标，可通过修改 `robot_perception/target_navigator.py` 中的 `target_color` 切换为 red / green / blue / yellow
+
+### 场景说明
+
+`worlds/colored_world.world` 基于官方 turtlebot3_world 场景（3×3 圆柱障碍物 + 六边形障碍物），额外加入了红、绿、蓝、黄四个彩色圆柱目标物；其中红色目标位于场地西侧开阔区域，对应下方演示中的长距离导航测试场景。`maps/` 目录下是配套的已建好的地图。
+
+---
+
 ## 已完成功能
 
 ### 1. 仿真环境与自主导航
