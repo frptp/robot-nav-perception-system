@@ -106,7 +106,7 @@
       <static>1</static>
       <link name='ros_symbol::symbol'>
         <collision name='one_one'>
-          <pose>-1.1 -1.1 0.25 0 -0 0</pose>
+          <pose>-1.1 -1.1 -10 0 -0 0</pose>
           <geometry>
             <cylinder>
               <radius>0.15</radius>
@@ -128,7 +128,7 @@
           </surface>
         </collision>
         <visual name='one_one'>
-          <pose>-1.1 -1.1 0.25 0 -0 0</pose>
+          <pose>-1.1 -1.1 -10 0 -0 0</pose>
           <geometry>
             <cylinder>
               <radius>0.15</radius>
@@ -143,7 +143,7 @@
           </material>
         </visual>
         <collision name='one_two'>
-          <pose>-1.1 0 0.25 0 -0 0</pose>
+          <pose>-1.1 0 -10 0 -0 0</pose>
           <geometry>
             <cylinder>
               <radius>0.15</radius>
@@ -165,7 +165,7 @@
           </surface>
         </collision>
         <visual name='one_two'>
-          <pose>-1.1 0 0.25 0 -0 0</pose>
+          <pose>-1.1 0 -10 0 -0 0</pose>
           <geometry>
             <cylinder>
               <radius>0.15</radius>
@@ -180,7 +180,7 @@
           </material>
         </visual>
         <collision name='one_three'>
-          <pose>-1.1 1.1 0.25 0 -0 0</pose>
+          <pose>-1.1 1.1 -10 0 -0 0</pose>
           <geometry>
             <cylinder>
               <radius>0.15</radius>
@@ -202,7 +202,7 @@
           </surface>
         </collision>
         <visual name='one_three'>
-          <pose>-1.1 1.1 0.25 0 -0 0</pose>
+          <pose>-1.1 1.1 -10 0 -0 0</pose>
           <geometry>
             <cylinder>
               <radius>0.15</radius>
@@ -217,7 +217,7 @@
           </material>
         </visual>
         <collision name='two_one'>
-          <pose>0 -1.1 0.25 0 -0 0</pose>
+          <pose>0 -1.1 -10 0 -0 0</pose>
           <geometry>
             <cylinder>
               <radius>0.15</radius>
@@ -239,7 +239,7 @@
           </surface>
         </collision>
         <visual name='two_one'>
-          <pose>0 -1.1 0.25 0 -0 0</pose>
+          <pose>0 -1.1 -10 0 -0 0</pose>
           <geometry>
             <cylinder>
               <radius>0.15</radius>
@@ -254,7 +254,7 @@
           </material>
         </visual>
         <collision name='two_two'>
-          <pose>0 0 0.25 0 -0 0</pose>
+          <pose>0 0 -10 0 -0 0</pose>
           <geometry>
             <cylinder>
               <radius>0.15</radius>
@@ -276,7 +276,7 @@
           </surface>
         </collision>
         <visual name='two_two'>
-          <pose>0 0 0.25 0 -0 0</pose>
+          <pose>0 0 -10 0 -0 0</pose>
           <geometry>
             <cylinder>
               <radius>0.15</radius>
@@ -291,7 +291,7 @@
           </material>
         </visual>
         <collision name='two_three'>
-          <pose>0 1.1 0.25 0 -0 0</pose>
+          <pose>0 1.1 -10 0 -0 0</pose>
           <geometry>
             <cylinder>
               <radius>0.15</radius>
@@ -313,7 +313,7 @@
           </surface>
         </collision>
         <visual name='two_three'>
-          <pose>0 1.1 0.25 0 -0 0</pose>
+          <pose>0 1.1 -10 0 -0 0</pose>
           <geometry>
             <cylinder>
               <radius>0.15</radius>
@@ -328,7 +328,7 @@
           </material>
         </visual>
         <collision name='three_one'>
-          <pose>1.1 -1.1 0.25 0 -0 0</pose>
+          <pose>1.1 -1.1 -10 0 -0 0</pose>
           <geometry>
             <cylinder>
               <radius>0.15</radius>
@@ -350,7 +350,7 @@
           </surface>
         </collision>
         <visual name='three_one'>
-          <pose>1.1 -1.1 0.25 0 -0 0</pose>
+          <pose>1.1 -1.1 -10 0 -0 0</pose>
           <geometry>
             <cylinder>
               <radius>0.15</radius>
@@ -365,7 +365,7 @@
           </material>
         </visual>
         <collision name='three_two'>
-          <pose>1.1 0 0.25 0 -0 0</pose>
+          <pose>1.1 0 -10 0 -0 0</pose>
           <geometry>
             <cylinder>
               <radius>0.15</radius>
@@ -387,7 +387,7 @@
           </surface>
         </collision>
         <visual name='three_two'>
-          <pose>1.1 0 0.25 0 -0 0</pose>
+          <pose>1.1 0 -10 0 -0 0</pose>
           <geometry>
             <cylinder>
               <radius>0.15</radius>
@@ -402,7 +402,7 @@
           </material>
         </visual>
         <collision name='three_three'>
-          <pose>1.1 1.1 0.25 0 -0 0</pose>
+          <pose>1.1 1.1 -10 0 -0 0</pose>
           <geometry>
             <cylinder>
               <radius>0.15</radius>
@@ -424,7 +424,7 @@
           </surface>
         </collision>
         <visual name='three_three'>
-          <pose>1.1 1.1 0.25 0 -0 0</pose>
+          <pose>1.1 1.1 -10 0 -0 0</pose>
           <geometry>
             <cylinder>
               <radius>0.15</radius>
@@ -782,7 +782,7 @@
       </link>
       <static>0</static>
       <allow_auto_disable>1</allow_auto_disable>
-      <pose>-1.5 -0.22 0.5 0 -0 0</pose>
+      <pose>0.5 2.35 0.5 0 -0 0</pose>
     </model>
     <model name='target_green'>
       <link name='link'>
@@ -1097,7 +1097,7 @@
       <pose>2.6 1.6 0.5 0 -0 0</pose>
     </model>
     <actor name='walking_person'>
-      <pose>1.0 1.5 0 0 0 0</pose>
+      <pose>1.5 -1.5 0 0 0 0</pose>
       <skin>
         <filename>model://actor/meshes/stand.dae</filename>
         <scale>1 1 1</scale>
@@ -1112,15 +1112,15 @@
       </script>
       <waypoint>
         <time>0</time>
-        <pose>1.0 1.5 0 0 0 0</pose>
+        <pose>1.5 -1.5 0 0 0 0</pose>
       </waypoint>
       <waypoint>
         <time>12</time>
-        <pose>1.0 -1.5 0 0 0 0</pose>
+        <pose>1.5 1.5 0 0 0 0</pose>
       </waypoint>
       <waypoint>
         <time>24</time>
-        <pose>1.0 1.5 0 0 0 0</pose>
+        <pose>1.5 -1.5 0 0 0 0</pose>
       </waypoint>
     </actor>
   </world>

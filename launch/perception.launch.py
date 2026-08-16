@@ -27,7 +27,7 @@ def generate_launch_description():
     default_world = os.path.join(
         pkg_robot_perception, 'worlds', 'colored_world.world')
     default_map = os.path.join(
-        pkg_robot_perception, 'maps', 'my_map_colored.yaml')
+        pkg_robot_perception, 'maps', 'my_map_new.yaml')
     if ROS_DISTRO == 'humble':
         default_params = os.path.join(
             pkg_turtlebot3_navigation2, 'param', 'humble',
