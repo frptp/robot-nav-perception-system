@@ -93,7 +93,7 @@ curl -L -o /tmp/yolov8n.pt https://github.com/ultralytics/assets/releases/downlo
 
 ---
 
-### 3. 感知-导航联动闭环（第5周）
+### 3. 视觉引导自主导航 (Visual Servoing)
 
 这是本阶段的核心成果——实现了"视觉检测目标 → 计算目标地图坐标 → 自主导航抵达"的完整闭环，技术方案：
 
@@ -112,7 +112,7 @@ curl -L -o /tmp/yolov8n.pt https://github.com/ultralytics/assets/releases/downlo
 
 ---
 
-### 4. YOLOv8 人体检测与追人导航（第6周）
+### 4. YOLOv8 人体检测与追人导航
 
 在颜色检测的基础上引入 YOLOv8，实现"检测人形目标 → 单目测距 → 自主追踪"：
 
