@@ -41,6 +41,8 @@ def generate_launch_description():
     world = LaunchConfiguration('world', default=default_world)
     map_file = LaunchConfiguration('map', default=default_map)
     params_file = LaunchConfiguration('params_file', default=default_params)
+    target_mode = LaunchConfiguration('target_mode', default='color')
+    model_path = LaunchConfiguration('model_path', default='/tmp/yolov8n.pt')
 
     navigation_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -62,10 +64,19 @@ def generate_launch_description():
         output='screen'
     )
 
+    yolo_detector_cmd = Node(
+        package='robot_perception',
+        executable='yolo_detector',
+        name='yolo_detector',
+        parameters=[{'model_path': model_path}],
+        output='screen'
+    )
+
     target_navigator_cmd = Node(
         package='robot_perception',
         executable='target_navigator',
         name='target_navigator',
+        parameters=[{'target_mode': target_mode}],
         output='screen'
     )
 
@@ -86,8 +97,17 @@ def generate_launch_description():
             'use_sim_time',
             default_value='true',
             description='是否使用仿真时钟'),
+        DeclareLaunchArgument(
+            'target_mode',
+            default_value='color',
+            description='目标搜寻模式: color(颜色) 或 person(YOLO追人)'),
+        DeclareLaunchArgument(
+            'model_path',
+            default_value='/tmp/yolov8n.pt',
+            description='YOLOv8 模型权重文件路径（target_mode=person 时需要）'),
 
         navigation_cmd,
         color_detector_cmd,
+        yolo_detector_cmd,
         target_navigator_cmd,
     ])

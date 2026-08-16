@@ -1096,5 +1096,32 @@
       <allow_auto_disable>1</allow_auto_disable>
       <pose>2.6 1.6 0.5 0 -0 0</pose>
     </model>
+    <actor name='walking_person'>
+      <pose>1.0 1.5 0 0 0 0</pose>
+      <skin>
+        <filename>model://actor/meshes/stand.dae</filename>
+        <scale>1 1 1</scale>
+      </skin>
+      <animation name='walking'>
+        <filename>model://actor/meshes/walk.dae</filename>
+        <scale>1 1 1</scale>
+      </animation>
+      <script>
+        <loop>true</loop>
+        <auto_start>true</auto_start>
+      </script>
+      <waypoint>
+        <time>0</time>
+        <pose>1.0 1.5 0 0 0 0</pose>
+      </waypoint>
+      <waypoint>
+        <time>12</time>
+        <pose>1.0 -1.5 0 0 0 0</pose>
+      </waypoint>
+      <waypoint>
+        <time>24</time>
+        <pose>1.0 1.5 0 0 0 0</pose>
+      </waypoint>
+    </actor>
   </world>
 </sdf>

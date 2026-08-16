@@ -28,6 +28,8 @@ def generate_launch_description():
 
     # 让 gazebo 能找到 turtlebot3 的模型文件（mesh），并保留用户已有的模型路径
     gazebo_model_path = os.path.join(pkg_turtlebot3_gazebo, 'models')
+    gazebo_model_path = gazebo_model_path + ':' + os.path.join(
+        pkg_robot_perception, 'models')
     if os.environ.get('GAZEBO_MODEL_PATH'):
         gazebo_model_path = gazebo_model_path + ':' + os.environ['GAZEBO_MODEL_PATH']
 

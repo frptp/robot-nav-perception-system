@@ -10,15 +10,20 @@ from tf2_geometry_msgs import do_transform_pose
 import cv2
 import numpy as np
 import math
+from robot_perception_interfaces.msg import YoloDetectionArray
 
 class TargetNavigator(Node):
     def __init__(self):
         super().__init__('target_navigator')
         self.bridge = CvBridge()
+        self.declare_parameter('target_mode', 'color')  # 'color' 或 'person'
+        self.target_mode = self.get_parameter('target_mode').value
 
         # 摄像头参数（来自waffle系列实际配置）
         self.image_width = 1920
         self.horizontal_fov = 1.085595  # 弧度
+        # 人的平均身高（米），追人模式用单目测距估算距离
+        self.person_height = 1.7
 
         # 目标颜色（可以改成你想找的颜色）
         self.target_color = 'red'
@@ -32,8 +37,14 @@ class TargetNavigator(Node):
         self.latest_scan = None
         self.goal_sent = False  # 避免重复发送目标点
 
-        # 订阅摄像头和雷达
-        self.create_subscription(Image, '/camera/image_raw', self.image_callback, 10)
+        # 订阅检测结果和雷达（颜色模式看相机，人形模式看 YOLO 检测话题）
+        if self.target_mode == 'person':
+            self.create_subscription(YoloDetectionArray,
+                                     '/yolo_detector/detections',
+                                     self.detection_callback, 10)
+        else:
+            self.create_subscription(Image, '/camera/image_raw',
+                                     self.image_callback, 10)
         self.create_subscription(LaserScan, '/scan', self.scan_callback, 10)
 
         # TF2 用于坐标转换
@@ -43,7 +54,9 @@ class TargetNavigator(Node):
         # Nav2 Action Client
         self.nav_client = ActionClient(self, NavigateToPose, 'navigate_to_pose')
 
-        self.get_logger().info(f'目标搜寻节点已启动，正在寻找: {self.target_color}')
+        target_desc = 'person' if self.target_mode == 'person' else self.target_color
+        self.get_logger().info(
+            f'目标搜寻节点已启动，模式={self.target_mode}，正在寻找: {target_desc}')
 
     def scan_callback(self, msg):
         self.latest_scan = msg
@@ -52,6 +65,7 @@ class TargetNavigator(Node):
         if self.goal_sent or self.latest_scan is None:
             return
 
+        self.image_width = msg.width
         frame = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
@@ -73,16 +87,52 @@ class TargetNavigator(Node):
             self.get_logger().info(f'发现目标 {self.target_color}，像素中心x={center_x}')
             self.navigate_to_target(center_x)
 
-    def navigate_to_target(self, pixel_center_x):
+    def detection_callback(self, msg):
+        if self.goal_sent or self.latest_scan is None:
+            return
+
+        # 把同一帧所有 person 框合并成一个整体：
+        # 角色可能被 YOLO 拆成上下两个框，单独取一个会导致测距偏大
+        x_min = y_min = None
+        x_max = y_max = 0.0
+        found = False
+        for det in msg.detections:
+            if det.class_name != 'person':
+                continue
+            x1 = det.center_x - det.width / 2.0
+            y1 = det.center_y - det.height / 2.0
+            x2 = det.center_x + det.width / 2.0
+            y2 = det.center_y + det.height / 2.0
+            x_min = x1 if x_min is None else min(x_min, x1)
+            y_min = y1 if y_min is None else min(y_min, y1)
+            x_max = max(x_max, x2)
+            y_max = max(y_max, y2)
+            found = True
+
+        if found:
+            self.image_width = msg.image_width
+            center_x = (x_min + x_max) / 2.0
+            height = y_max - y_min
+            self.get_logger().info(
+                f'发现目标 person，像素中心x={center_x:.0f}, 框高={height:.0f}')
+            self.navigate_to_target(center_x, height)
+
+    def navigate_to_target(self, pixel_center_x, box_height=None):
         # 1. 计算角度偏移(相对相机正前方，左负右正)
         offset_ratio = (pixel_center_x - self.image_width / 2.0) / (self.image_width / 2.0)
         angle = offset_ratio * (self.horizontal_fov / 2.0)
 
-        # 2. 用雷达数据查这个角度方向的距离
-        distance = self.get_distance_at_angle(angle)
-        if distance is None:
-            self.get_logger().warn('该方向雷达数据无效，跳过')
-            return
+        # 2. 估算距离：追人模式用单目测距（actor 无碰撞体，雷达测不到）；
+        #    颜色模式沿用雷达测距
+        if box_height is not None and box_height > 0:
+            focal = (self.image_width / 2.0) / math.tan(self.horizontal_fov / 2.0)
+            distance = self.person_height * focal / box_height
+            self.get_logger().info(f'单目估算距离: {distance:.2f} m')
+        else:
+            distance = self.get_distance_at_angle(angle)
+            if distance is None:
+                self.get_logger().warn('该方向雷达数据无效，跳过')
+                return
 
         # 3. 计算目标在base_link坐标系下的相对位置
         # 注意：雷达角度定义与相机角度符号可能相反，需要视情况调整
@@ -131,6 +181,7 @@ class TargetNavigator(Node):
     def result_callback(self, future):
         result = future.result().result
         self.get_logger().info(f'导航结果: {result}')
+        self.goal_sent = False  # 到达后允许重新检测目标，实现持续追踪
 
     def get_distance_at_angle(self, angle):
         scan = self.latest_scan

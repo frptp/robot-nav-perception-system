@@ -19,6 +19,8 @@ setup(
             glob.glob('worlds/*.world')),
         (os.path.join('share', package_name, 'maps'),
             glob.glob('maps/*')),
+        (os.path.join('share', package_name, 'models', 'actor', 'meshes'),
+            glob.glob('models/actor/meshes/*')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -35,6 +37,7 @@ setup(
         'console_scripts': [
 	    'color_detector = robot_perception.color_detector:main',
 	    'target_navigator = robot_perception.target_navigator:main',
+	    'yolo_detector = robot_perception.yolo_detector:main',
         ],
     }
 )

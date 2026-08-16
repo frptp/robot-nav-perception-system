@@ -40,6 +40,7 @@ export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:$(ros2 pkg prefix turtlebot3_gazebo)
 | SLAM 建图 | `ros2 launch robot_perception mapping.launch.py` |
 | Nav2 自主导航 | `ros2 launch robot_perception navigation.launch.py` |
 | 感知-导航闭环 | `ros2 launch robot_perception perception.launch.py` |
+| 感知-导航闭环（追人） | `ros2 launch robot_perception perception.launch.py target_mode:=person` |
 
 常用操作：
 
@@ -47,6 +48,14 @@ export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:$(ros2 pkg prefix turtlebot3_gazebo)
 - 保存地图：`ros2 run nav2_map_server map_saver_cli -f ~/my_map`
 - 加载自定义世界：`ros2 launch robot_perception simulation.launch.py world:=/path/to/your.world`
 - 感知闭环默认寻找**红色**目标，可通过修改 `robot_perception/target_navigator.py` 中的 `target_color` 切换为 red / green / blue / yellow
+- 追人模式（`target_mode:=person`）需要 YOLOv8 权重文件（默认读取 `/tmp/yolov8n.pt`，约 6MB）：
+
+```bash
+pip3 install ultralytics
+curl -L -o /tmp/yolov8n.pt https://github.com/ultralytics/assets/releases/download/v8.3.0/yolov8n.pt
+```
+
+也可通过 `model_path:=/path/to/model.pt` 指定其他权重路径。
 
 ### 场景说明
 
@@ -103,6 +112,24 @@ export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:$(ros2 pkg prefix turtlebot3_gazebo)
 
 ---
 
+### 4. YOLOv8 人体检测与追人导航（第6周）
+
+在颜色检测的基础上引入 YOLOv8，实现"检测人形目标 → 单目测距 → 自主追踪"：
+
+- **人体检测**：YOLOv8n 轻量模型实时检测画面中的 person，发布 `/yolo_detector/detections` 检测结果话题，并输出带标注的可视化图像（`/yolo_detector/visualization`）
+- **单目测距**：利用 person 检测框高度与人体平均身高（1.7m）估算目标距离；场景中的 actor 无碰撞体、激光雷达测不到，因此追人模式改用单目测距
+- **框合并**：同一人物被 YOLO 拆成多个框时合并为一个整体再计算中心与高度，避免测距偏大
+- **持续追踪**：到达目标后复位目标状态，继续检测并追踪下一位置，形成追人闭环
+- **仿真场景**：`colored_world.world` 中新增 `walking_person` actor，在场地中来回走动，供检测与追踪测试
+
+启动方式：
+
+```bash
+ros2 launch robot_perception perception.launch.py target_mode:=person
+```
+
+---
+
 ## 关键问题排查记录
 
 开发过程中排查并解决的几个典型工程问题，体现调试与问题定位能力：
@@ -121,7 +148,7 @@ export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:$(ros2 pkg prefix turtlebot3_gazebo)
 
 - **仿真与机器人系统**：ROS2 Humble、Gazebo、TurtleBot3 (Waffle)
 - **导航与建图**：Nav2、slam_toolbox、costmap_2d
-- **感知**：OpenCV（HSV颜色检测）、cv_bridge
+- **感知**：OpenCV（HSV颜色检测）、Ultralytics YOLOv8（人体检测）、cv_bridge
 - **坐标与通信**：tf2、Action通信（NavigateToPose）
 - **开发环境**：Ubuntu 22.04
 
@@ -129,7 +156,7 @@ export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:$(ros2 pkg prefix turtlebot3_gazebo)
 
 ## 后续计划
 
-- [ ] 引入 YOLOv8 轻量目标检测，替代/补充颜色检测方案，提升检测鲁棒性
+- [x] 引入 YOLOv8 轻量目标检测，替代/补充颜色检测方案，提升检测鲁棒性
 - [ ] 尝试基于 PPO 的强化学习端到端导航（本地CPU训练或借助Colab GPU）
 - [ ] 补充自然语言指令解析，实现"给定一句话指令→自主完成任务"的具身智能demo
 
